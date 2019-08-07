@@ -9,28 +9,49 @@ const webhookUrl = "https://discordapp.com/api/webhooks/{DISCORD-ID}/{TOKEN}";
 
 // eventToBuild transforms pubsub event message to a build object.
 const eventToBuild = data => {
-  return JSON.parse(Buffer.from(data, "base64").toString());
+  return JSON.parse(new Buffer(data, "base64").toString());
 };
 
-// createSlackMessage create a message from a build object.
-const createSlackMessage = build => {
-  const message = {
-    text: `Build \`${build.id}\``,
-    mrkdwn: true,
-    attachments: [
-      {
-        title: "Build logs",
-        title_link: build.logUrl,
-        fields: [
-          {
-            title: "Status",
-            value: build.status
-          }
-        ]
-      }
-    ]
+// custom embed color
+const colors = {
+  FAILURE: 6887205,
+  SUCCESS: 4886754,
+  INTERNAL_ERROR: 16098851,
+  TIMEOUT: 9442302
+};
+
+// get color by status
+const getColor = status => {
+  return colors[status];
+};
+
+// createDiscordMessage create a message from a build object.
+const createDiscordMessage = build => {
+  return {
+    content: `${build.projectId} ${build.tagName} build status ${build.status}`,
+    embed: {
+      title: `Build ${build.tagName}`,
+      description: `Finished with status ${build.status}, in ${duration}.`,
+      url: build.logUrl,
+      color: getColor(build.status),
+      timestamp: new Date(),
+      footer: {
+        icon_url: "https://github.com/unasol.png",
+        text: "Powered by UNA SOLUTIONS"
+      },
+      author: {
+        name: `${build.projectId}`,
+        icon_url:
+          "https://github.com/google-cloud-build.png"
+      },
+      fields: [
+        {
+          name: "Build id",
+          value: `\`\`\`${build.id}\`\`\``
+        }
+      ]
+    }
   };
-  return message;
 };
 
 module.exports.subscribeCloudBuild = async (event, callback) => {
@@ -40,8 +61,7 @@ module.exports.subscribeCloudBuild = async (event, callback) => {
     const discordId = url.pathname.split("/")[3];
     const webHookToken = url.pathname.split("/")[4];
     const webhook = new Discord.WebhookClient(discordId, webHookToken);
-
-    const build = eventToBuild(event.data.data);
+    const build = eventToBuild(event.data);
 
     // Skip if the current status is not in the status list.
     // Add additional statues to list if you'd like:
@@ -49,12 +69,12 @@ module.exports.subscribeCloudBuild = async (event, callback) => {
     // INTERNAL_ERROR, TIMEOUT, CANCELLED
     const status = ["SUCCESS", "FAILURE", "INTERNAL_ERROR", "TIMEOUT"];
     if (status.indexOf(build.status) === -1) {
-      return callback();
+      return false;
     }
 
     // Send message to Slack.
-    const message = createSlackMessage(build);
-    await webhook.sendSlackMessage(message);
+    const message = createDiscordMessage(build);
+    await webhook.send(message.content, { ...message.embed });
     return true;
   } catch (error) {
     console.log(error);
