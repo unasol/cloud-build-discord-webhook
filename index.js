@@ -5,7 +5,8 @@ const URL = require("url");
 // https://cloud.google.com/cloud-build/docs/configure-third-party-notifications
 
 //Insert your webhook url
-const webhookUrl = "https://discordapp.com/api/webhooks/{DISCORD-ID}/{TOKEN}";
+const webhookUrl =
+"https://discordapp.com/api/webhooks/608080878589181973/Nio-yyM6K-xCOGDtC5V_Uh7oNGfh4ZquFsibrrRsX1KJLKVjmqJ8eKq7jzBTkW_Yu-Iw";
 
 // eventToBuild transforms pubsub event message to a build object.
 const eventToBuild = data => {
@@ -31,7 +32,7 @@ const createDiscordMessage = build => {
     content: `${build.projectId} ${build.tagName} build status ${build.status}`,
     embed: {
       title: `Build ${build.tagName}`,
-      description: `Finished with status ${build.status}, in ${duration}.`,
+      description: `Finished with status ${build.status}, in ${build.duration}.`,
       url: build.logUrl,
       color: getColor(build.status),
       timestamp: new Date(),
