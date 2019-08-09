@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const URL = require("url");
+const humanizeDuration = require("humanize-duration");
 
 // Documentation:
 // https://cloud.google.com/cloud-build/docs/configure-third-party-notifications
@@ -29,14 +30,16 @@ const getColor = status => {
 // createDiscordMessage create a message from a build object.
 const createDiscordMessage = build => {
   const version = build.tagName || build.id;
+  let duration = humanizeDuration(
+    new Date(build.finishTime) - new Date(build.startTime)
+  );
+
   return {
     content: `${build.projectId} ${version} build status ${build.status}`,
     embeds: [
       {
-        title: `Build ${build.tagName}`,
-        description: `Finished with status ${build.status}, in ${
-          build.duration
-        }.`,
+        title: `Build ${version}`,
+        description: `Finished with status ${build.status}, in ${duration}.`,
         url: build.logUrl,
         color: getColor(build.status),
         timestamp: new Date(),
