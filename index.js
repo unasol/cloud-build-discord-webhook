@@ -28,30 +28,34 @@ const getColor = status => {
 
 // createDiscordMessage create a message from a build object.
 const createDiscordMessage = build => {
+  const version = build.tagName || build.id;
   return {
-    content: `${build.projectId} ${build.tagName} build status ${build.status}`,
-    embed: {
-      title: `Build ${build.tagName}`,
-      description: `Finished with status ${build.status}, in ${build.duration}.`,
-      url: build.logUrl,
-      color: getColor(build.status),
-      timestamp: new Date(),
-      footer: {
-        icon_url: "https://github.com/unasol.png",
-        text: "Powered by UNA SOLUTIONS"
-      },
-      author: {
-        name: `${build.projectId}`,
-        icon_url:
-          "https://github.com/google-cloud-build.png"
-      },
-      fields: [
-        {
-          name: "Build id",
-          value: `\`\`\`${build.id}\`\`\``
-        }
-      ]
-    }
+    content: `${build.projectId} ${version} build status ${build.status}`,
+    embeds: [
+      {
+        title: `Build ${build.tagName}`,
+        description: `Finished with status ${build.status}, in ${
+          build.duration
+        }.`,
+        url: build.logUrl,
+        color: getColor(build.status),
+        timestamp: new Date(),
+        footer: {
+          icon_url: "https://github.com/unasol.png",
+          text: "Powered by UNA SOLUTIONS"
+        },
+        author: {
+          name: `${build.projectId}`,
+          icon_url: "https://github.com/google-cloud-build.png"
+        },
+        fields: [
+          {
+            name: "Build id",
+            value: `\`\`\`${build.id}\`\`\``
+          }
+        ]
+      }
+    ]
   };
 };
 
@@ -73,9 +77,9 @@ module.exports.subscribeCloudBuild = async (event, callback) => {
       return false;
     }
 
-    // Send message to Slack.
+    // Send message to Discord.
     const message = createDiscordMessage(build);
-    await webhook.send(message.content, { ...message.embed });
+    await webhook.send(message.content, { embeds: [...message.embeds] });
     return true;
   } catch (error) {
     console.log(error);
