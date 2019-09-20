@@ -10,7 +10,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/uws": "^11.149.1",
+    "bufferutil": "^4.0.1",
     "discord.js": "github:discordjs/discord.js",
-    "humanize-duration": "^3.20.1"
-  }
+    "erlpack": "github:discordapp/erlpack",
+    "humanize-duration": "^3.20.1",
+    "sodium": "^3.0.2",
+    "zlib-sync": "^0.1.5",
+    "zucc": "^0.1.2"
+  },
+  "engines": {
+    "node": "10"
+  },
 }

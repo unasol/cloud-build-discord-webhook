@@ -5,5 +5,5 @@ https://cloud.google.com/cloud-build/docs/configure-third-party-notifications?hl
 Deploy function
 
 ```sh
-gcloud functions deploy subscribeCloudBuild --stage-bucket [STAGING_BUCKET_NAME] --trigger-topic cloud-builds --runtime nodejs8 --project=[PROJECT_ID] 
+gcloud functions deploy subscribeCloudBuild --stage-bucket [PROJECT-ID_cloudbuild] --trigger-topic cloud-builds --runtime nodejs10 --project=[PROJECT_ID] 
 ```
