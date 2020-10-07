@@ -7,7 +7,7 @@ const humanizeDuration = require("humanize-duration");
 
 //Insert your webhook url
 const webhookUrl =
-"https://discordapp.com/api/webhooks/608080878589181973/Nio-yyM6K-xCOGDtC5V_Uh7oNGfh4ZquFsibrrRsX1KJLKVjmqJ8eKq7jzBTkW_Yu-Iw";
+"https://discordapp.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN";
 
 // eventToBuild transforms pubsub event message to a build object.
 const eventToBuild = data => {
