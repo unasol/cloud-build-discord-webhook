@@ -29,7 +29,7 @@ const getColor = status => {
 
 // createDiscordMessage create a message from a build object.
 const createDiscordMessage = build => {
-  const version = build.tagName || build.id;
+  const version = build.tags ? build.tags.toString() : build.id;
   let duration = humanizeDuration(
     new Date(build.finishTime) - new Date(build.startTime)
   );
